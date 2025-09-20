@@ -1,6 +1,7 @@
 # Weather and Electricity Price Aggregator
 
-A Spring Boot application that aggregates electricity price data from CSV uploads and weather data from the Open Meteo API, providing a unified REST API for querying the combined data.
+A Spring Boot application that aggregates electricity price data from CSV uploads and weather data from the Open Meteo
+API, providing a unified REST API for querying the combined data.
 
 ## Features
 
@@ -35,6 +36,7 @@ The application follows a Hybrid Domain-Driven Design (DDD) + Layered Architectu
 ## Quick Start
 
 ### Prerequisites
+
 - Java 17+
 - Docker and Docker Compose
 - Maven
@@ -53,8 +55,8 @@ The application follows a Hybrid Domain-Driven Design (DDD) + Layered Architectu
    ```
 
 4. Access the application:
-   - API: http://localhost:8080
-   - Swagger UI: http://localhost:8080/swagger-ui.html
+    - API: http://localhost:8080
+    - Swagger UI: http://localhost:8080/swagger-ui.html
 
 ### Running Locally
 
@@ -71,6 +73,7 @@ The application follows a Hybrid Domain-Driven Design (DDD) + Layered Architectu
 ## API Endpoints
 
 ### Upload Electricity Price Data
+
 ```http
 POST /api/v1/electricity-prices/upload
 Content-Type: multipart/form-data
@@ -79,11 +82,13 @@ file: [CSV file with NPS Estonia data]
 ```
 
 ### Get Aggregated Data
+
 ```http
 GET /api/v1/aggregated-data?startDate=2024-01-01&endDate=2024-01-31
 ```
 
 ### Manual Weather Data Fetch
+
 ```http
 POST /api/v1/weather/fetch/2024-01-15
 ```
@@ -91,11 +96,13 @@ POST /api/v1/weather/fetch/2024-01-15
 ## CSV Format
 
 The CSV file should contain the following columns:
+
 - Column 1: "Ajatempel (UTC)" - Unix timestamp
 - Column 2: "Kuupäev (Eesti aeg)" - Estonian datetime (dd.MM.yyyy HH:mm)
 - Column 6: "NPS Eesti" - Estonia electricity price
 
 Example:
+
 ```csv
 "Ajatempel (UTC)";"Kuupäev (Eesti aeg)";"NPS Läti";"NPS Leedu";"NPS Soome";"NPS Eesti"
 "1704060000";"01.01.2024 00:00";"40,01";"40,01";"40,01";"40,01"
@@ -103,11 +110,14 @@ Example:
 
 ## Weather Data
 
-The application automatically fetches weather data from the Open Meteo Historical Weather API for Tallinn, Estonia coordinates. Weather sync runs every minute to fetch data for dates that have electricity price data but no weather data.
+The application automatically fetches weather data from the Open Meteo Historical Weather API for Tallinn, Estonia
+coordinates. Weather sync runs every minute to fetch data for dates that have electricity price data but no weather
+data.
 
 ## Testing
 
 Run unit and integration tests:
+
 ```bash
 mvn test
 ```
@@ -116,13 +126,15 @@ Integration tests use Testcontainers to spin up a PostgreSQL database automatica
 
 ## Database Schema
 
-### electricity_prices
+### electricity_price
+
 - `id` (BIGINT, PK)
 - `timestamp` (TIMESTAMP, UNIQUE)
 - `date` (DATE)
 - `nps_estonia` (DOUBLE)
 
 ### weather_data
+
 - `id` (BIGINT, PK)
 - `date` (DATE, UNIQUE)
 - `average_temperature` (DOUBLE)
@@ -130,16 +142,19 @@ Integration tests use Testcontainers to spin up a PostgreSQL database automatica
 ## Development
 
 ### Building
+
 ```bash
 mvn clean compile
 ```
 
 ### Running Tests
+
 ```bash
 mvn test
 ```
 
 ### Creating Docker Image
+
 ```bash
 mvn clean package -DskipTests
 docker build -t electricity-price-aggregator .

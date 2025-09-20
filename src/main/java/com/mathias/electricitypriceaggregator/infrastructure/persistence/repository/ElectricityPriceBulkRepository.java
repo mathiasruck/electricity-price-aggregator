@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -24,15 +25,15 @@ public class ElectricityPriceBulkRepository {
     public void upsertAll(List<ElectricityPrice> prices) {
         List<ElectricityPriceEntity> entities = mapper.toEntity(prices);
         String sql = """
-                INSERT INTO electricity_price (recorded_at, nps_estonia, country)
+                INSERT INTO electricity_price (recorded_at, price, country)
                 VALUES (?, ?, ?)
                 ON CONFLICT (recorded_at, country)
-                DO UPDATE SET nps_estonia = EXCLUDED.nps_estonia
+                DO UPDATE SET price = EXCLUDED.price
                 """;
 
         jdbcTemplate.batchUpdate(sql, entities, 1000,
                 (ps, entity) -> {
-                    ps.setObject(1, entity.getRecordedAt());
+                    ps.setObject(1, Timestamp.from(entity.getRecordedAt()));
                     ps.setDouble(2, entity.getPrice());
                     ps.setString(3, entity.getCountry());
                 });

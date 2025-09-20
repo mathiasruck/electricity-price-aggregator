@@ -23,6 +23,7 @@ public class ElectricityPriceMapper {
         ElectricityPriceEntity entity = new ElectricityPriceEntity();
         entity.setRecordedAt(ofEpochSecond(domain.getRecordedAt()));
         entity.setPrice(domain.getPrice());
+        entity.setCountry(domain.getCountry());
         return entity;
     }
 

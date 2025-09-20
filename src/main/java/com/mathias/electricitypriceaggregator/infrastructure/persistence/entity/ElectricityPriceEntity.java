@@ -9,7 +9,7 @@ import java.util.Objects;
  * JPA entity for electricity price data
  */
 @Entity
-@Table(name = "electricity_prices",
+@Table(name = "electricity_price",
         uniqueConstraints = @UniqueConstraint(name = "un_recorded_at_country", columnNames = {"recorded_at", "country"}),
         indexes = @Index(name = "idx_recorded_at_country", columnList = "recorded_at, country"))
 public class ElectricityPriceEntity {
