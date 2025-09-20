@@ -18,7 +18,8 @@ public class WeatherApiClient {
 
     private final RestTemplate restTemplate;
     private static final String BASE_URL = "https://archive-api.open-meteo.com/v1/archive";
-    private static final String LOCATION_TALLINN = "latitude=59.4370&longitude=24.7536"; // Tallinn, Estonia coordinates
+    private static final String LOCATION_ESTONIA = "latitude=59&longitude=26";
+    private static final String TIMEZONE = "UTC";
 
     public WeatherApiClient() {
         this.restTemplate = new RestTemplate();
@@ -30,16 +31,17 @@ public class WeatherApiClient {
     public Double fetchDailyAverageTemperature(LocalDate date) {
         try {
             String dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
-            String url = String.format("%s?%s&start_date=%s&end_date=%s&hourly=temperature_2m",
-                    BASE_URL, LOCATION_TALLINN, dateStr, dateStr);
-
+            String url = String.format("%s?%s&start_date=%s&end_date=%s&hourly=temperature_2m&timezone=%s",
+                    BASE_URL, LOCATION_ESTONIA, dateStr, dateStr, TIMEZONE);
+            System.out.println("Fetching weather data from URL: " + url);
             WeatherApiResponse response = restTemplate.getForObject(url, WeatherApiResponse.class);
 
             if (response != null && response.getHourly() != null &&
-                response.getHourly().getTemperature2m() != null &&
-                !response.getHourly().getTemperature2m().isEmpty()) {
+                    response.getHourly().getTemperature2m() != null &&
+                    !response.getHourly().getTemperature2m().isEmpty()) {
 
                 // Calculate average temperature for the day
+                // todo filter hours that we hava electricity price data for?
                 List<Double> temperatures = response.getHourly().getTemperature2m();
                 return temperatures.stream()
                         .filter(Objects::nonNull)

@@ -12,6 +12,5 @@ public interface ElectricityPriceRepository {
 
     List<ElectricityPrice> findByDateBetween(LocalDate startDate, LocalDate endDate);
 
-    List<LocalDate> findDistinctDatesBetween(LocalDate startDate, LocalDate endDate);
-
+    List<LocalDate> findPricesDateWithoutWeather();
 }

@@ -5,6 +5,7 @@ import com.mathias.electricitypriceaggregator.domain.repository.ElectricityPrice
 import com.mathias.electricitypriceaggregator.infrastructure.persistence.mapper.ElectricityPriceMapper;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -36,10 +37,10 @@ public class ElectricityPriceRepositoryImpl implements ElectricityPriceRepositor
     }
 
     @Override
-    public List<LocalDate> findDistinctDatesBetween(LocalDate startDate, LocalDate endDate) {
-        Instant startInstant = getStartInstant(startDate);
-        Instant endInstant = getEndInstant(endDate);
-        return jpaRepository.findDistinctDatesBetween(startInstant, endInstant);
+    public List<LocalDate> findPricesDateWithoutWeather() {
+        return jpaRepository.findPricesDateWithoutWeather().stream()
+                .map(Date::toLocalDate)
+                .toList();
     }
 
     private static Instant getEndInstant(LocalDate endDate) {

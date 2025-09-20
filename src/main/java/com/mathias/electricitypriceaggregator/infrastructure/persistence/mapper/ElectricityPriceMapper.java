@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.mathias.electricitypriceaggregator.domain.ElectricityPriceFactory.create;
+import static com.mathias.electricitypriceaggregator.domain.factory.ElectricityPriceFactory.create;
 import static java.time.Instant.ofEpochSecond;
 
 /**

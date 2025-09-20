@@ -1,4 +1,4 @@
-package com.mathias.electricitypriceaggregator.domain;
+package com.mathias.electricitypriceaggregator.domain.factory;
 
 import com.mathias.electricitypriceaggregator.domain.model.ElectricityPrice;
 import com.mathias.electricitypriceaggregator.domain.model.ElectricityPriceEstonia;
