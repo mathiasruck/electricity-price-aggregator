@@ -23,8 +23,8 @@ public class WeatherService {
     private final WeatherApiClient weatherApiClient;
 
     public WeatherService(WeatherDataRepository weatherDataRepository,
-                         ElectricityPriceRepository electricityPriceRepository,
-                         WeatherApiClient weatherApiClient) {
+                          ElectricityPriceRepository electricityPriceRepository,
+                          WeatherApiClient weatherApiClient) {
         this.weatherDataRepository = weatherDataRepository;
         this.electricityPriceRepository = electricityPriceRepository;
         this.weatherApiClient = weatherApiClient;
@@ -34,6 +34,8 @@ public class WeatherService {
      * Scheduled method to fetch weather data every minute
      */
     @Scheduled(fixedRate = 60000) // Run every minute
+    // todo fix this sync, to get only the missing weather data for the dates that have electricity price data.
+    // Logic is incorrect as is now
     public void syncWeatherData() {
         try {
             // Get all dates that have electricity price data but no weather data

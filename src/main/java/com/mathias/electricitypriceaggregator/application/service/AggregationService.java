@@ -24,7 +24,7 @@ public class AggregationService {
     private final WeatherDataRepository weatherDataRepository;
 
     public AggregationService(ElectricityPriceRepository electricityPriceRepository,
-                             WeatherDataRepository weatherDataRepository) {
+                              WeatherDataRepository weatherDataRepository) {
         this.electricityPriceRepository = electricityPriceRepository;
         this.weatherDataRepository = weatherDataRepository;
     }
@@ -40,9 +40,9 @@ public class AggregationService {
         List<WeatherData> weatherDataList = weatherDataRepository.findByDateBetween(startDate, endDate);
 
         // Group electricity prices by date and calculate daily averages
-        Map<LocalDate, Double> dailyPriceAverages = electricityPrices.stream()
+        Map<Long, Double> dailyPriceAverages = electricityPrices.stream()
                 .collect(Collectors.groupingBy(
-                        ElectricityPrice::getDate,
+                        ElectricityPrice::getTimestamp,
                         Collectors.averagingDouble(ElectricityPrice::getNpsEstonia)
                 ));
 
@@ -57,6 +57,7 @@ public class AggregationService {
         return startDate.datesUntil(endDate.plusDays(1))
                 .map(date -> new DailyAggregatedData(
                         date,
+                        // todo fix this mapping - should match types. Today is LocalDate, but electricity price uses timestamp as Long
                         dailyPriceAverages.get(date),
                         weatherByDate.get(date)
                 ))

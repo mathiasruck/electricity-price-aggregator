@@ -4,9 +4,9 @@ import com.mathias.electricitypriceaggregator.application.service.AggregationSer
 import com.mathias.electricitypriceaggregator.domain.valueobject.DailyAggregatedData;
 import com.mathias.electricitypriceaggregator.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -15,7 +15,8 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration test for AggregatedDataController
@@ -26,7 +27,7 @@ public class AggregatedDataControllerIntegrationTest extends BaseIntegrationTest
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private AggregationService aggregationService;
 
     @Test

@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Spring Data JPA repository for ElectricityPriceEntity
@@ -17,10 +16,9 @@ import java.util.Optional;
 @Repository
 public interface JpaElectricityPriceRepository extends JpaRepository<ElectricityPriceEntity, Long> {
 
-    Optional<ElectricityPriceEntity> findByTimestamp(LocalDateTime timestamp);
-
+    //todo fix this, it should be instant not LocalDate. Remove?
     List<ElectricityPriceEntity> findByDateBetween(LocalDate startDate, LocalDate endDate);
 
-    @Query("SELECT DISTINCT e.date FROM ElectricityPriceEntity e WHERE e.date BETWEEN :startDate AND :endDate ORDER BY e.date")
-    List<LocalDate> findDistinctDatesBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    @Query("SELECT e.timestamp FROM ElectricityPriceEntity e WHERE e.timestamp BETWEEN :startDate AND :endDate ORDER BY e.timestamp")
+    List<LocalDate> findDistinctDatesBetween(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);
 }

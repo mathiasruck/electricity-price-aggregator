@@ -1,19 +1,19 @@
 package com.mathias.electricitypriceaggregator.application.service;
 
 import com.mathias.electricitypriceaggregator.domain.model.ElectricityPrice;
-import com.mathias.electricitypriceaggregator.domain.repository.ElectricityPriceRepository;
+import com.mathias.electricitypriceaggregator.infrastructure.persistence.repository.ElectricityPriceBulkRepository;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.CsvToBeanBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -23,10 +23,9 @@ import java.util.List;
 @Transactional
 public class ElectricityPriceService {
 
-    private final ElectricityPriceRepository electricityPriceRepository;
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private final ElectricityPriceBulkRepository electricityPriceRepository;
 
-    public ElectricityPriceService(ElectricityPriceRepository electricityPriceRepository) {
+    public ElectricityPriceService(ElectricityPriceBulkRepository electricityPriceRepository) {
         this.electricityPriceRepository = electricityPriceRepository;
     }
 
@@ -37,57 +36,35 @@ public class ElectricityPriceService {
         try {
             List<ElectricityPrice> electricityPrices = parseCsvFile(file);
             upsertElectricityPrices(electricityPrices);
-        } catch (IOException | CsvException e) {
+        } catch (IOException e) {
+            // todo improve error handling. Logs?
             throw new RuntimeException("Failed to process CSV file: " + e.getMessage(), e);
         }
     }
 
-    private List<ElectricityPrice> parseCsvFile(MultipartFile file) throws IOException, CsvException {
-        List<ElectricityPrice> electricityPrices = new ArrayList<>();
+    public List<ElectricityPrice> parseCsvFile(MultipartFile file) throws IOException {
+        try (Reader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.ISO_8859_1)) {
+            var parser = new CSVParserBuilder()
+                    .withSeparator(';')
+                    .build();
+            CSVReader csvReader = new CSVReaderBuilder(reader)
+                    .withCSVParser(parser)
+                    .build();
 
-        try (CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
-            List<String[]> records = csvReader.readAll();
+            return new CsvToBeanBuilder<ElectricityPrice>(csvReader)
+                    .withType(ElectricityPrice.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .withFilter(line -> line.length >= 1 && !line[0].isBlank())// todo need this? Improve validation and filtering?
+                    .build()
+                    .parse();
 
-            // Skip header row
-            for (int i = 1; i < records.size(); i++) {
-                String[] record = records.get(i);
-                if (record.length >= 6) {
-                    String dateTimeStr = record[1]; // "Kuupäev (Eesti aeg)" column
-                    String npsEstoniaStr = record[5]; // "NPS Eesti" column
-
-                    try {
-                        LocalDateTime timestamp = LocalDateTime.parse(dateTimeStr, DATE_FORMATTER);
-                        Double npsEstonia = parsePrice(npsEstoniaStr);
-
-                        electricityPrices.add(new ElectricityPrice(timestamp, npsEstonia));
-                    } catch (Exception e) {
-                        // Log and skip invalid records
-                        System.err.println("Skipping invalid record: " + String.join(",", record) + " - " + e.getMessage());
-                    }
-                }
-            }
+            // todo improve error handling
+            //} catch (RuntimeException | IOException e) {
+            //    throw new CsvParsingException("Failed to parse CSV file", e);
         }
-
-        return electricityPrices;
-    }
-
-    private Double parsePrice(String priceStr) {
-        // Handle comma as decimal separator and remove any extra whitespace
-        return Double.parseDouble(priceStr.trim().replace(",", "."));
     }
 
     private void upsertElectricityPrices(List<ElectricityPrice> electricityPrices) {
-        for (ElectricityPrice price : electricityPrices) {
-            // Check if record exists
-            var existing = electricityPriceRepository.findByTimestamp(price.getTimestamp());
-            if (existing.isPresent()) {
-                // Update existing record
-                existing.get().setNpsEstonia(price.getNpsEstonia());
-                electricityPriceRepository.save(existing.get());
-            } else {
-                // Insert new record
-                electricityPriceRepository.save(price);
-            }
-        }
+        electricityPriceRepository.upsertAll(electricityPrices);
     }
 }

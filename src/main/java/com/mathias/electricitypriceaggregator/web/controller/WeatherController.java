@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 
@@ -26,7 +29,7 @@ public class WeatherController {
 
     @PostMapping("/fetch/{date}")
     @Operation(summary = "Manually fetch weather data for a specific date",
-               description = "Trigger manual fetch of weather data from Open Meteo API for the specified date")
+            description = "Trigger manual fetch of weather data from Open Meteo API for the specified date")
     public ResponseEntity<String> fetchWeatherData(
             @Parameter(description = "Date to fetch weather data for (YYYY-MM-DD)", example = "2024-01-15")
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {

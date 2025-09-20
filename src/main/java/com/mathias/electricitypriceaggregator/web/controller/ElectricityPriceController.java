@@ -4,8 +4,13 @@ import com.mathias.electricitypriceaggregator.application.service.ElectricityPri
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * REST controller for electricity price operations
@@ -23,14 +28,14 @@ public class ElectricityPriceController {
 
     @PostMapping("/upload")
     @Operation(summary = "Upload electricity price data from CSV file",
-               description = "Upload a CSV file containing historical electricity price data. The file should contain NPS Estonia price data.")
+            description = "Upload a CSV file containing historical electricity price data. The file should contain NPS Estonia price data.")
     public ResponseEntity<String> uploadCsv(@RequestParam("file") MultipartFile file) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("File is empty");
             }
 
-            if (!file.getOriginalFilename().toLowerCase().endsWith(".csv")) {
+            if (!requireNonNull(file.getOriginalFilename()).toLowerCase().endsWith(".csv")) {
                 return ResponseEntity.badRequest().body("File must be a CSV file");
             }
 

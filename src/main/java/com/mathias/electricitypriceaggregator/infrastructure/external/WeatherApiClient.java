@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Client for fetching weather data from Open Meteo API
@@ -41,7 +42,7 @@ public class WeatherApiClient {
                 // Calculate average temperature for the day
                 List<Double> temperatures = response.getHourly().getTemperature2m();
                 return temperatures.stream()
-                        .filter(temp -> temp != null)
+                        .filter(Objects::nonNull)
                         .mapToDouble(Double::doubleValue)
                         .average()
                         .orElse(0.0);

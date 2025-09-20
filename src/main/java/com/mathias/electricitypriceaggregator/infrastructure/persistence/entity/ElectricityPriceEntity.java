@@ -1,8 +1,8 @@
 package com.mathias.electricitypriceaggregator.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -10,35 +10,20 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "electricity_prices",
-       indexes = {
-           @Index(name = "idx_timestamp", columnList = "timestamp"),
-           @Index(name = "idx_date", columnList = "date")
-       })
+        uniqueConstraints = @UniqueConstraint(name = "un_timestamp", columnNames = "timestamp"),
+        indexes = @Index(name = "idx_timestamp", columnList = "timestamp"))
 public class ElectricityPriceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "timestamp", nullable = false, unique = true)
-    private LocalDateTime timestamp;
-
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
+    @Column(name = "timestamp", columnDefinition = "TIMESTAMPTZ", nullable = false, unique = true)
+    private Instant timestamp;
 
     @Column(name = "nps_estonia", nullable = false)
     private Double npsEstonia;
 
-    public ElectricityPriceEntity() {
-    }
-
-    public ElectricityPriceEntity(LocalDateTime timestamp, Double npsEstonia) {
-        this.timestamp = timestamp;
-        this.date = timestamp.toLocalDate();
-        this.npsEstonia = npsEstonia;
-    }
-
-    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -47,23 +32,12 @@ public class ElectricityPriceEntity {
         this.id = id;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
-        if (timestamp != null) {
-            this.date = timestamp.toLocalDate();
-        }
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public Double getNpsEstonia() {

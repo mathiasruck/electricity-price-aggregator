@@ -1,7 +1,9 @@
 package com.mathias.electricitypriceaggregator.domain.model;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import com.mathias.electricitypriceaggregator.infrastructure.csv.DoubleConverter;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+
 import java.util.Objects;
 
 /**
@@ -9,45 +11,19 @@ import java.util.Objects;
  */
 public class ElectricityPrice {
 
-    private Long id;
-    private LocalDateTime timestamp;
-    private LocalDate date;
-    private Double npsEstonia; // NPS Eesti price in EUR/MWh
+    @CsvBindByName(column = "Ajatempel (UTC)")
+    private long timestamp;
 
-    public ElectricityPrice() {
-    }
+    @CsvCustomBindByName(column = "NPS Eesti", converter = DoubleConverter.class)
+    private Double npsEstonia;
 
-    public ElectricityPrice(LocalDateTime timestamp, Double npsEstonia) {
-        this.timestamp = timestamp;
-        this.date = timestamp.toLocalDate();
-        this.npsEstonia = npsEstonia;
-    }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-        if (timestamp != null) {
-            this.date = timestamp.toLocalDate();
-        }
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public Double getNpsEstonia() {
@@ -74,9 +50,7 @@ public class ElectricityPrice {
     @Override
     public String toString() {
         return "ElectricityPrice{" +
-                "id=" + id +
                 ", timestamp=" + timestamp +
-                ", date=" + date +
                 ", npsEstonia=" + npsEstonia +
                 '}';
     }

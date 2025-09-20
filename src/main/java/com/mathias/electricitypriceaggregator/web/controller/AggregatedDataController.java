@@ -8,7 +8,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +32,7 @@ public class AggregatedDataController {
 
     @GetMapping
     @Operation(summary = "Get aggregated data for date range",
-               description = "Retrieve daily aggregated electricity prices and weather data for the specified date range")
+            description = "Retrieve daily aggregated electricity prices and weather data for the specified date range")
     public ResponseEntity<List<DailyAggregatedDataDto>> getAggregatedData(
             @Parameter(description = "Start date (YYYY-MM-DD)", example = "2024-01-01")
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
