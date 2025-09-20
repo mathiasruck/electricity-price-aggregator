@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface JpaElectricityPriceRepository extends JpaRepository<ElectricityPriceEntity, Long> {
 
-    //todo fix this, it should be instant not LocalDate. Remove?
+    //todo Remove?
     List<ElectricityPriceEntity> findByRecordedAtBetween(Instant startInstant, Instant endInstant);
 
     @Query("""

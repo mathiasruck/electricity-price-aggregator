@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.time.Instant.ofEpochSecond;
+import static java.time.ZoneOffset.UTC;
+
 /**
  * Application service for aggregating electricity price and weather data
  */
@@ -32,6 +35,7 @@ public class AggregationService {
     /**
      * Get aggregated data for a date range
      */
+    //todo create auxiliary table to store aggregated data instead of calculating on the fly?
     public List<DailyAggregatedData> getAggregatedData(LocalDate startDate, LocalDate endDate) {
         // Fetch electricity prices for the date range
         List<ElectricityPrice> electricityPrices = electricityPriceRepository.findByDateBetween(startDate, endDate);
@@ -40,9 +44,11 @@ public class AggregationService {
         List<WeatherData> weatherDataList = weatherDataRepository.findByDateBetween(startDate, endDate);
 
         // Group electricity prices by date and calculate daily averages
-        Map<Long, Double> dailyPriceAverages = electricityPrices.stream()
+        Map<LocalDate, Double> dailyPriceAverages = electricityPrices.stream()
                 .collect(Collectors.groupingBy(
-                        ElectricityPrice::getRecordedAt,
+                        electricityPrice -> ofEpochSecond(electricityPrice.getRecordedAt())
+                                .atZone(UTC)
+                                .toLocalDate(),
                         Collectors.averagingDouble(ElectricityPrice::getPrice)
                 ));
 

@@ -1,5 +1,7 @@
 package com.mathias.electricitypriceaggregator.domain.valueobject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -23,11 +25,11 @@ public class DailyAggregatedData {
     }
 
     public Double getAverageElectricityPrice() {
-        return averageElectricityPrice;
+        return round(averageElectricityPrice);
     }
 
     public Double getAverageTemperature() {
-        return averageTemperature;
+        return round(averageTemperature);
     }
 
     @Override
@@ -52,5 +54,14 @@ public class DailyAggregatedData {
                 ", averageElectricityPrice=" + averageElectricityPrice +
                 ", averageTemperature=" + averageTemperature +
                 '}';
+    }
+
+    private Double round(Double value) {
+        if (value == null) {
+            return null;
+        }
+        return BigDecimal.valueOf(value)
+                .setScale(1, RoundingMode.HALF_UP) // round
+                .doubleValue();
     }
 }
