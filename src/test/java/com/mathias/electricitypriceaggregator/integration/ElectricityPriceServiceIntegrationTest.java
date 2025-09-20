@@ -49,7 +49,7 @@ public class ElectricityPriceServiceIntegrationTest extends BaseIntegrationTest 
         );
 
         assertThat(prices).hasSize(2);
-        assertThat(prices.get(0).getNpsEstonia()).isEqualTo(40.01);
-        assertThat(prices.get(1).getNpsEstonia()).isEqualTo(38.37);
+        assertThat(prices.get(0).getPrice()).isEqualTo(40.01);
+        assertThat(prices.get(1).getPrice()).isEqualTo(38.37);
     }
 }

@@ -35,7 +35,8 @@ public class WeatherService {
      */
     @Scheduled(fixedRate = 60000) // Run every minute
     // todo fix this sync, to get only the missing weather data for the dates that have electricity price data.
-    // Logic is incorrect as is now
+    //  Logic is incorrect as is now
+    //  What's the timezone here? UTC? Local? Does the service provider returns in UTC or local time?
     public void syncWeatherData() {
         try {
             // Get all dates that have electricity price data but no weather data

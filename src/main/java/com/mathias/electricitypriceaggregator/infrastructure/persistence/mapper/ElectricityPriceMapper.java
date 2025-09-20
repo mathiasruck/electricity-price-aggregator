@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.mathias.electricitypriceaggregator.domain.ElectricityPriceFactory.create;
 import static java.time.Instant.ofEpochSecond;
 
 /**
@@ -20,8 +21,8 @@ public class ElectricityPriceMapper {
         }
 
         ElectricityPriceEntity entity = new ElectricityPriceEntity();
-        entity.setTimestamp(ofEpochSecond(domain.getTimestamp()));
-        entity.setNpsEstonia(domain.getNpsEstonia());
+        entity.setRecordedAt(ofEpochSecond(domain.getRecordedAt()));
+        entity.setPrice(domain.getPrice());
         return entity;
     }
 
@@ -30,9 +31,9 @@ public class ElectricityPriceMapper {
             return null;
         }
 
-        ElectricityPrice domain = new ElectricityPrice();
-        domain.setTimestamp(entity.getTimestamp().getEpochSecond());
-        domain.setNpsEstonia(entity.getNpsEstonia());
+        ElectricityPrice domain = create(entity.getCountry());
+        domain.setRecordedAt(entity.getRecordedAt().getEpochSecond());
+        domain.setPrice(entity.getPrice());
         return domain;
     }
 

@@ -10,19 +10,22 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "electricity_prices",
-        uniqueConstraints = @UniqueConstraint(name = "un_timestamp", columnNames = "timestamp"),
-        indexes = @Index(name = "idx_timestamp", columnList = "timestamp"))
+        uniqueConstraints = @UniqueConstraint(name = "un_recorded_at_country", columnNames = {"recorded_at", "country"}),
+        indexes = @Index(name = "idx_recorded_at_country", columnList = "recorded_at, country"))
 public class ElectricityPriceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "timestamp", columnDefinition = "TIMESTAMPTZ", nullable = false, unique = true)
-    private Instant timestamp;
+    @Column(name = "recorded_at", columnDefinition = "TIMESTAMPTZ", nullable = false, unique = true)
+    private Instant recordedAt;
 
-    @Column(name = "nps_estonia", nullable = false)
-    private Double npsEstonia;
+    @Column(name = "price", nullable = false)
+    private Double price;
+
+    @Column(name = "country", nullable = false, length = 2)
+    private String country;
 
     public Long getId() {
         return id;
@@ -32,20 +35,28 @@ public class ElectricityPriceEntity {
         this.id = id;
     }
 
-    public Instant getTimestamp() {
-        return timestamp;
+    public Instant getRecordedAt() {
+        return recordedAt;
     }
 
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
+    public void setRecordedAt(Instant recordedAt) {
+        this.recordedAt = recordedAt;
     }
 
-    public Double getNpsEstonia() {
-        return npsEstonia;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setNpsEstonia(Double npsEstonia) {
-        this.npsEstonia = npsEstonia;
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     @Override
@@ -53,11 +64,11 @@ public class ElectricityPriceEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ElectricityPriceEntity that = (ElectricityPriceEntity) o;
-        return Objects.equals(timestamp, that.timestamp);
+        return Objects.equals(recordedAt, that.recordedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(timestamp);
+        return Objects.hash(recordedAt);
     }
 }

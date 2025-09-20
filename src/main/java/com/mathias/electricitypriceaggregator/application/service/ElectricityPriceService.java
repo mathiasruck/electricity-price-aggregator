@@ -1,6 +1,7 @@
 package com.mathias.electricitypriceaggregator.application.service;
 
 import com.mathias.electricitypriceaggregator.domain.model.ElectricityPrice;
+import com.mathias.electricitypriceaggregator.domain.model.ElectricityPriceEstonia;
 import com.mathias.electricitypriceaggregator.infrastructure.persistence.repository.ElectricityPriceBulkRepository;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -52,7 +53,7 @@ public class ElectricityPriceService {
                     .build();
 
             return new CsvToBeanBuilder<ElectricityPrice>(csvReader)
-                    .withType(ElectricityPrice.class)
+                    .withType(ElectricityPriceEstonia.class)
                     .withIgnoreLeadingWhiteSpace(true)
                     .withFilter(line -> line.length >= 1 && !line[0].isBlank())// todo need this? Improve validation and filtering?
                     .build()

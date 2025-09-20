@@ -17,8 +17,8 @@ import java.util.List;
 public interface JpaElectricityPriceRepository extends JpaRepository<ElectricityPriceEntity, Long> {
 
     //todo fix this, it should be instant not LocalDate. Remove?
-    List<ElectricityPriceEntity> findByDateBetween(LocalDate startDate, LocalDate endDate);
+    List<ElectricityPriceEntity> findByRecordedAtBetween(Instant startInstant, Instant endInstant);
 
-    @Query("SELECT e.timestamp FROM ElectricityPriceEntity e WHERE e.timestamp BETWEEN :startDate AND :endDate ORDER BY e.timestamp")
-    List<LocalDate> findDistinctDatesBetween(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);
+    @Query("SELECT e.recordedAt FROM ElectricityPriceEntity e WHERE e.recordedAt BETWEEN :startInstant AND :endInstant ORDER BY e.recordedAt")
+    List<LocalDate> findDistinctDatesBetween(@Param("startInstant") Instant startInstant, @Param("endInstant") Instant endInstant);
 }

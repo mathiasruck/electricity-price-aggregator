@@ -42,8 +42,8 @@ public class AggregationService {
         // Group electricity prices by date and calculate daily averages
         Map<Long, Double> dailyPriceAverages = electricityPrices.stream()
                 .collect(Collectors.groupingBy(
-                        ElectricityPrice::getTimestamp,
-                        Collectors.averagingDouble(ElectricityPrice::getNpsEstonia)
+                        ElectricityPrice::getRecordedAt,
+                        Collectors.averagingDouble(ElectricityPrice::getPrice)
                 ));
 
         // Create a map of weather data by date

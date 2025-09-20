@@ -24,16 +24,17 @@ public class ElectricityPriceBulkRepository {
     public void upsertAll(List<ElectricityPrice> prices) {
         List<ElectricityPriceEntity> entities = mapper.toEntity(prices);
         String sql = """
-                INSERT INTO electricity_price (timestamp, nps_estonia)
-                VALUES (?, ?)
-                ON CONFLICT (timestamp)
+                INSERT INTO electricity_price (recorded_at, nps_estonia, country)
+                VALUES (?, ?, ?)
+                ON CONFLICT (recorded_at, country)
                 DO UPDATE SET nps_estonia = EXCLUDED.nps_estonia
                 """;
 
         jdbcTemplate.batchUpdate(sql, entities, 1000,
                 (ps, entity) -> {
-                    ps.setObject(1, entity.getTimestamp());
-                    ps.setDouble(2, entity.getNpsEstonia());
+                    ps.setObject(1, entity.getRecordedAt());
+                    ps.setDouble(2, entity.getPrice());
+                    ps.setString(3, entity.getCountry());
                 });
     }
 }

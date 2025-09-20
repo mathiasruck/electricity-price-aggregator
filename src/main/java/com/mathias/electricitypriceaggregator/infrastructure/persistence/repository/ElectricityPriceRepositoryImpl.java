@@ -28,21 +28,31 @@ public class ElectricityPriceRepositoryImpl implements ElectricityPriceRepositor
 
     @Override
     public List<ElectricityPrice> findByDateBetween(LocalDate startDate, LocalDate endDate) {
-        return jpaRepository.findByDateBetween(startDate, endDate).stream()
+        Instant startInstant = getStartInstant(startDate);
+        Instant endInstant = getEndInstant(endDate);
+        return jpaRepository.findByRecordedAtBetween(startInstant, endInstant).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
 
     @Override
     public List<LocalDate> findDistinctDatesBetween(LocalDate startDate, LocalDate endDate) {
-        Instant startInstant = startDate
-                .atStartOfDay()
-                .toInstant(UTC);
-        Instant endInstant = endDate
+        Instant startInstant = getStartInstant(startDate);
+        Instant endInstant = getEndInstant(endDate);
+        return jpaRepository.findDistinctDatesBetween(startInstant, endInstant);
+    }
+
+    private static Instant getEndInstant(LocalDate endDate) {
+        return endDate
                 .plusDays(1)
                 .atStartOfDay(UTC)
                 .minusNanos(1)
                 .toInstant();
-        return jpaRepository.findDistinctDatesBetween(startInstant, endInstant);
+    }
+
+    private static Instant getStartInstant(LocalDate startDate) {
+        return startDate
+                .atStartOfDay()
+                .toInstant(UTC);
     }
 }
