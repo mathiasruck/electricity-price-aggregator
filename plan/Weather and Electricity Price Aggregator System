@@ -1,0 +1,50 @@
+Software Developer Candidate Test Task
+Weather and Electricity Price Aggregator System
+
+Introduction
+Imagine a scenario where a local energy research group is conducting a study on electricity pricing trends and their correlation with weather conditions. To assist them, you will develop a backend application that aggregates electricity prices and weather data, allowing users to query and analyze historical trends.
+This system should allow users to upload historical electricity price data, in the background fetch weather information, and provide an API to retrieve aggregated insights.
+
+Project Requirements
+CSV File Upload for Electricity Prices
+Implement an endpoint to upload the provided CSV file containing historical electricity prices.
+Provided data file is for 2024
+Read and save the date and NPS (Nordpool Spot Price) for Estonia(Eesti) (“NPS Eesti”) to database
+Data should be stored in a PostgreSQL database.
+Support upserting (update if the record exists, insert if it does not).
+
+
+Fetch Weather Data from Open Meteo API
+Implement functionality that periodically fetches hourly temperature data from Open Meteo Historical Weather API (e.g., once per minute to ensure no gaps in data).
+API Docs: https://open-meteo.com/en/docs/historical-weather-api
+Open Meteo does not require registration and an API key to use
+The weather data should only be fetched for periods where we have any price data available
+Data should be stored with the following fields:
+Date (YYYY-MM-DD)
+Average Temperature (°C)
+
+
+Data Querying API
+Implement a RESTful API that allows querying data by date range.
+Granularity should be day
+Query Parameters:
+startDate (YYYY-MM-DD)
+endDate (YYYY-MM-DD)
+Example output:
+
+
+Technical Requirements
+Backend: Spring Boot (Java)
+Database: PostgreSQL
+Containerization: Docker setup for both the backend and the database
+
+Bonus Features (Optional)
+Testing:
+Use Testcontainers to run integration tests with PostgreSQL in a containerized environment.
+API Documentation: Swagger (OpenAPI)
+
+
+References
+The information provided here is for reference purposes only and is not required as part of this home assignment.
+Data source for provided CSV file
+https://dashboard.elering.ee/en/nps/price?interval=minute&period=search&start=2023-12-31T22:00:00.000Z&end=2024-12-31T21:59:59.000Z&show=graph
