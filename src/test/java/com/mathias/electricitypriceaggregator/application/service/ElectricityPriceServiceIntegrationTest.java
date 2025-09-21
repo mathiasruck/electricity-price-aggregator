@@ -1,7 +1,7 @@
-package com.mathias.electricitypriceaggregator.integration;
+package com.mathias.electricitypriceaggregator.application.service;
 
-import com.mathias.electricitypriceaggregator.application.service.ElectricityPriceService;
 import com.mathias.electricitypriceaggregator.domain.repository.ElectricityPriceRepository;
+import com.mathias.electricitypriceaggregator.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;

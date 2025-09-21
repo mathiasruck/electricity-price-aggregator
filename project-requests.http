@@ -10,5 +10,5 @@ Content-Type: multipart/form-data; boundary=boundary
 Content-Disposition: form-data; name="file"; filename="electricity-nps price_2024.csv"
 Content-Type: text/csv
 
-< ./plan/electricity-nps price_2024.csv
+< ./csv/electricity-nps price_2024.csv
 --boundary--

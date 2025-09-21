@@ -17,7 +17,8 @@ import static java.time.Instant.ofEpochSecond;
 import static java.time.ZoneOffset.UTC;
 
 /**
- * Application service for aggregating electricity price and weather data
+ * Application service for aggregating electricity price and weather data.
+ * Provides functionality to retrieve aggregated daily data for electricity prices and weather.
  */
 @Service
 @Transactional(readOnly = true)
@@ -33,13 +34,22 @@ public class AggregationService {
     }
 
     /**
-     * Get aggregated data for a date range
+     * Get aggregated data for a date range.
+     *
+     * @param startDate the start date of the range (inclusive)
+     * @param endDate   the end date of the range (inclusive)
+     * @return list of daily aggregated data within the range, excluding days without any data
+     * @throws IllegalArgumentException if startDate is null, endDate is null, or endDate is before startDate
      */
-    // todo next: create auxiliary table to store aggregated data instead of calculating on the fly
     public List<DailyAggregatedData> getAggregatedData(LocalDate startDate, LocalDate endDate) {
-        List<ElectricityPrice> electricityPrices = electricityPriceRepository.findByDateBetween(startDate, endDate);
+        validateDateRange(startDate, endDate);
 
+        List<ElectricityPrice> electricityPrices = electricityPriceRepository.findByDateBetween(startDate, endDate);
         List<WeatherData> weatherDataList = weatherDataRepository.findByDateBetween(startDate, endDate);
+
+        if (electricityPrices.isEmpty() && weatherDataList.isEmpty()) {
+            return List.of();
+        }
 
         // Group electricity prices by date and calculate daily averages
         Map<LocalDate, Double> dailyPriceAverages = electricityPrices.stream()
@@ -57,14 +67,30 @@ public class AggregationService {
                         WeatherData::getAverageTemperature
                 ));
 
-        // Create aggregated data for each date
+        // Create aggregated data for each date, filtering out days with no data
         return startDate.datesUntil(endDate.plusDays(1))
-                .map(date -> new DailyAggregatedData(
-                        date,
-                        dailyPriceAverages.get(date),
-                        weatherByDate.get(date)
-                ))
+                .map(date -> createDailyAggregatedData(date, dailyPriceAverages, weatherByDate))
                 .filter(data -> data.averageElectricityPrice() != null || data.averageTemperature() != null)
                 .collect(Collectors.toList());
+    }
+
+    private void validateDateRange(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null) {
+            throw new IllegalArgumentException("Start date cannot be null");
+        }
+        if (endDate == null) {
+            throw new IllegalArgumentException("End date cannot be null");
+        }
+        if (endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException(
+                    String.format("End date %s cannot be before start date %s", endDate, startDate));
+        }
+    }
+
+    private DailyAggregatedData createDailyAggregatedData(LocalDate date, Map<LocalDate, Double> dailyPriceAverages,
+                                                          Map<LocalDate, Double> weatherByDate) {
+        Double price = dailyPriceAverages.get(date);
+        Double temperature = weatherByDate.get(date);
+        return new DailyAggregatedData(date, price, temperature);
     }
 }

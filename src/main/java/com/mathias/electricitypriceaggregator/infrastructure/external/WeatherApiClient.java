@@ -25,8 +25,8 @@ public class WeatherApiClient {
 
     private final RestTemplate restTemplate;
 
-    public WeatherApiClient() {
-        this.restTemplate = new RestTemplate();
+    public WeatherApiClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -37,6 +37,9 @@ public class WeatherApiClient {
      * @return The average temperature for the specified hours, or null if no data
      */
     public Double fetchDailyAverageTemperature(LocalDate date, List<Integer> availableHourIndices) {
+        if (availableHourIndices == null || availableHourIndices.isEmpty()) {
+            return null;
+        }
         try {
             String dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
             String url = String.format("%s?%s&start_date=%s&end_date=%s&hourly=temperature_2m&timezone=%s",

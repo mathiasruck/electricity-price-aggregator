@@ -44,17 +44,12 @@ The application follows a Hybrid Domain-Driven Design (DDD) + Layered Architectu
 ### Running with Docker Compose
 
 1. Clone the repository
-2. Build the application:
-   ```bash
-   mvn clean package -DskipTests
-   ```
-
-3. Start the services:
+2. Start the services:
    ```bash
    docker-compose up -d
    ```
 
-4. Access the application:
+3. Access the application:
     - API: http://localhost:8080
     - Swagger UI: http://localhost:8080/swagger-ui.html
 
@@ -62,7 +57,13 @@ The application follows a Hybrid Domain-Driven Design (DDD) + Layered Architectu
 
 1. Start PostgreSQL database:
    ```bash
-   docker run -d --name postgres -p 5432:5432 -e POSTGRES_DB=electricity_db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres:15-alpine
+   docker run -d \
+     --name postgres \
+     -p 5432:5432 \
+     -e POSTGRES_DB=electricity_db \
+     -e POSTGRES_USER=postgres \
+     -e POSTGRES_PASSWORD=postgres \
+     postgres:15-alpine
    ```
 
 2. Run the application:
@@ -70,7 +71,7 @@ The application follows a Hybrid Domain-Driven Design (DDD) + Layered Architectu
    mvn spring-boot:run
    ```
 
-## API Endpoints
+## API Documentation
 
 ### Upload Electricity Price Data
 
@@ -78,28 +79,33 @@ The application follows a Hybrid Domain-Driven Design (DDD) + Layered Architectu
 POST /api/v1/electricity-prices/upload
 Content-Type: multipart/form-data
 
-file: [CSV file with NPS Estonia data]
+Body:
+- file: CSV file containing NPS Estonia price data
 ```
 
 ### Get Aggregated Data
 
 ```http
-GET /api/v1/aggregated-data?startDate=2024-01-01&endDate=2024-01-31
+GET /api/v1/aggregated-data
+Parameters:
+  - startDate: YYYY-MM-DD (required)
+  - endDate: YYYY-MM-DD (required)
+
+Example: /api/v1/aggregated-data?startDate=2024-01-01&endDate=2024-01-31
 ```
 
-### Manual Weather Data Fetch
+## Data Formats
 
-```http
-POST /api/v1/weather/fetch/2024-01-15
-```
+### Electricity Price CSV Format
 
-## CSV Format
+The CSV file must be semicolon-separated and contain the following columns:
 
-The CSV file should contain the following columns:
-
-- Column 1: "Ajatempel (UTC)" - Unix timestamp
-- Column 2: "Kuupäev (Eesti aeg)" - Estonian datetime (dd.MM.yyyy HH:mm)
-- Column 6: "NPS Eesti" - Estonia electricity price
+1. "Ajatempel (UTC)" - Unix timestamp
+2. "Kuupäev (Eesti aeg)" - Estonian datetime (dd.MM.yyyy HH:mm)
+3. "NPS Läti" - Latvia price
+4. "NPS Leedu" - Lithuania price
+5. "NPS Soome" - Finland price
+6. "NPS Eesti" - Estonia price (used by the system)
 
 Example:
 
@@ -108,70 +114,80 @@ Example:
 "1704060000";"01.01.2024 00:00";"40,01";"40,01";"40,01";"40,01"
 ```
 
-## Weather Data
+### Weather Data
 
-The application automatically fetches weather data from the Open Meteo Historical Weather API for Tallinn, Estonia
-coordinates. Weather sync runs every minute to fetch data for dates that have electricity price data but no weather
-data.
+The application automatically fetches weather data for Tallinn, Estonia from the Open Meteo Historical Weather API. The
+weather data sync process:
 
-## Testing
-
-Run unit and integration tests:
-
-```bash
-mvn test
-```
-
-Integration tests use Testcontainers to spin up a PostgreSQL database automatically.
+- Runs automatically every minute
+- Fetches data for dates with electricity prices but missing weather data
+- Stores daily average temperature measurements
 
 ## Database Schema
 
 ### electricity_price
 
-- `id` (BIGINT, PK)
-- `timestamp` (TIMESTAMP, UNIQUE)
-- `date` (DATE)
-- `nps_estonia` (DOUBLE)
+| Column      | Type        | Constraints        |
+|-------------|-------------|--------------------|
+| id          | BIGINT      | PK, AUTO INCREMENT |
+| recorded_at | TIMESTAMPTZ | NOT NULL           |
+| price       | DOUBLE      | NOT NULL           |
+| country     | VARCHAR(2)  | NOT NULL           |
+
+Unique constraint: `un_recorded_at_country` on (recorded_at, country)
+Index: `idx_recorded_at_country` on (recorded_at, country)
 
 ### weather_data
 
-- `id` (BIGINT, PK)
-- `date` (DATE, UNIQUE)
-- `average_temperature` (DOUBLE)
+| Column              | Type   | Constraints        |
+|---------------------|--------|--------------------|
+| id                  | BIGINT | PK, AUTO INCREMENT |
+| date                | DATE   | NOT NULL, UNIQUE   |
+| average_temperature | DOUBLE | NOT NULL           |
+
+Unique constraint: `uc_weather_data_date` on (date)
 
 ## Development
 
-### Building
+### Building and Testing
 
 ```bash
+# Build the application
 mvn clean compile
-```
 
-### Running Tests
-
-```bash
+# Run tests (includes integration tests)
 mvn test
-```
 
-### Creating Docker Image
-
-```bash
+# Build Docker image
 mvn clean package -DskipTests
 docker build -t electricity-price-aggregator .
 ```
 
 ## Configuration
 
-Key configuration properties in `application.yml`:
+Key application settings in `application.yml`:
 
-- Database connection settings
-- File upload limits (10MB)
-- Swagger/OpenAPI documentation paths
-- Logging levels
+```yaml
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/electricity_db
+    username: postgres
+    password: postgres
+```
 
 ## Contributing
 
-1. Follow the existing package structure
-2. Write tests for new features
-3. Update documentation as needed
-4. Follow Java coding conventions
+1. Fork the repository
+2. Create a feature branch
+3. Follow existing code structure and package organization
+4. Include tests for new features
+5. Update documentation as needed
+6. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
