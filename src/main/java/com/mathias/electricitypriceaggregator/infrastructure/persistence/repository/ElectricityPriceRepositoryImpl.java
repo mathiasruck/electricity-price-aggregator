@@ -31,14 +31,16 @@ public class ElectricityPriceRepositoryImpl implements ElectricityPriceRepositor
     public List<ElectricityPrice> findByDateBetween(LocalDate startDate, LocalDate endDate) {
         Instant startInstant = getStartInstant(startDate);
         Instant endInstant = getEndInstant(endDate);
-        return jpaRepository.findByRecordedAtBetween(startInstant, endInstant).stream()
+        return jpaRepository.findByRecordedAtBetween(startInstant, endInstant)
+                .stream()
                 .map(mapper::toDomain)
                 .toList();
     }
 
     @Override
     public List<LocalDate> findPricesDateWithoutWeather() {
-        return jpaRepository.findPricesDateWithoutWeather().stream()
+        return jpaRepository.findPricesDateWithoutWeather()
+                .stream()
                 .map(Date::toLocalDate)
                 .toList();
     }

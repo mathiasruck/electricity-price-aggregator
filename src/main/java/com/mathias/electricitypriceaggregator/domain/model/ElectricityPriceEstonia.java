@@ -6,13 +6,13 @@ import com.opencsv.bean.CsvCustomBindByName;
 import java.util.Objects;
 
 /**
- * Domain entity representing electricity price data
+ * Domain entity representing electricity price data for Estonia
  */
 public class ElectricityPriceEstonia extends ElectricityPrice {
 
     private static final String COUNTRY = "EE";
 
-    @CsvCustomBindByName(column = "NPS Eesti", converter = DoubleConverter.class)
+    @CsvCustomBindByName(column = "NPS Eesti", converter = DoubleConverter.class, required = true)
     private Double price;
 
     @Override
@@ -20,6 +20,7 @@ public class ElectricityPriceEstonia extends ElectricityPrice {
         return price;
     }
 
+    @Override
     public void setPrice(Double price) {
         this.price = price;
     }
@@ -34,20 +35,21 @@ public class ElectricityPriceEstonia extends ElectricityPrice {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ElectricityPriceEstonia that = (ElectricityPriceEstonia) o;
-        return Objects.equals(getRecordedAt(), that.getRecordedAt())
-                && Objects.equals(getCountry(), that.getCountry());
+        return Objects.equals(getRecordedAt(), that.getRecordedAt()) &&
+                Objects.equals(getCountry(), that.getCountry());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRecordedAt());
+        return Objects.hash(getRecordedAt(), getCountry());
     }
 
     @Override
     public String toString() {
-        return "ElectricityPrice{" +
-                ", recordedAt=" + getRecordedAt() +
+        return "ElectricityPriceEstonia{" +
+                "recordedAt=" + getRecordedAt() +
                 ", price=" + price +
+                ", country=" + COUNTRY +
                 '}';
     }
 }

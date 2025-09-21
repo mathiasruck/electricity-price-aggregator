@@ -16,8 +16,8 @@ import static java.time.Instant.ofEpochSecond;
 public class ElectricityPriceMapper {
 
     public ElectricityPriceEntity toEntity(ElectricityPrice domain) {
-        if (domain == null) {
-            return null;
+        if (domain == null || domain.getPrice() == null) {
+            throw new IllegalArgumentException("ElectricityPrice and its price cannot be null");
         }
 
         ElectricityPriceEntity entity = new ElectricityPriceEntity();

@@ -18,7 +18,7 @@ public class ElectricityPriceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "recorded_at", columnDefinition = "TIMESTAMPTZ", nullable = false, unique = true)
+    @Column(name = "recorded_at", columnDefinition = "TIMESTAMPTZ", nullable = false)
     private Instant recordedAt;
 
     @Column(name = "price", nullable = false)
@@ -64,11 +64,12 @@ public class ElectricityPriceEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ElectricityPriceEntity that = (ElectricityPriceEntity) o;
-        return Objects.equals(recordedAt, that.recordedAt);
+        return Objects.equals(recordedAt, that.recordedAt) &&
+                Objects.equals(country, that.country);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(recordedAt);
+        return Objects.hash(recordedAt, country);
     }
 }

@@ -7,6 +7,8 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.bean.CsvToBeanBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,22 +25,24 @@ import java.util.List;
 @Service
 @Transactional
 public class ElectricityPriceService {
+    private static final Logger LOG = LoggerFactory.getLogger(ElectricityPriceService.class);
 
-    private final ElectricityPriceBulkRepository electricityPriceRepository;
+    private final ElectricityPriceBulkRepository electricityPriceBulkRepository;
 
-    public ElectricityPriceService(ElectricityPriceBulkRepository electricityPriceRepository) {
-        this.electricityPriceRepository = electricityPriceRepository;
+    public ElectricityPriceService(ElectricityPriceBulkRepository electricityPriceBulkRepository) {
+        this.electricityPriceBulkRepository = electricityPriceBulkRepository;
     }
 
     /**
      * Process and save electricity price data from CSV upload
      */
+    @Transactional
     public void processCsvUpload(MultipartFile file) {
         try {
             List<ElectricityPrice> electricityPrices = parseCsvFile(file);
+            LOG.debug("Parsed {} electricity prices from CSV", electricityPrices.size());
             upsertElectricityPrices(electricityPrices);
         } catch (IOException e) {
-            // todo improve error handling. Logs?
             throw new RuntimeException("Failed to process CSV file: " + e.getMessage(), e);
         }
     }
@@ -52,16 +56,16 @@ public class ElectricityPriceService {
                     .withCSVParser(parser)
                     .build();
 
-            return new CsvToBeanBuilder<ElectricityPrice>(csvReader)
+            var result = new CsvToBeanBuilder<ElectricityPrice>(csvReader)
                     .withType(ElectricityPriceEstonia.class)
                     .withIgnoreLeadingWhiteSpace(true)
-                    .withFilter(line -> line.length >= 1 && !line[0].isBlank())// todo need this? Improve validation and filtering?
+                    .withVerifyReader(true)
+                    .withFilter(line -> line.length >= 1 && !line[0].isBlank())
                     .build()
                     .parse();
 
-            // todo improve error handling
-            //} catch (RuntimeException | IOException e) {
-            //    throw new CsvParsingException("Failed to parse CSV file", e);
+            LOG.debug("Found {} records in CSV file", result.size());
+            return result;
         }
     }
 

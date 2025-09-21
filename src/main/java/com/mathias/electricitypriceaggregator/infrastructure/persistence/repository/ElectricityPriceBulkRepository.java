@@ -5,6 +5,7 @@ import com.mathias.electricitypriceaggregator.infrastructure.persistence.entity.
 import com.mathias.electricitypriceaggregator.infrastructure.persistence.mapper.ElectricityPriceMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
@@ -15,13 +16,14 @@ public class ElectricityPriceBulkRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ElectricityPriceMapper mapper;
+    private final EntityManager entityManager;
 
     public ElectricityPriceBulkRepository(JdbcTemplate jdbcTemplate, ElectricityPriceMapper mapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.mapper = mapper;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public void upsertAll(List<ElectricityPrice> prices) {
         List<ElectricityPriceEntity> entities = mapper.toEntity(prices);
         String sql = """
@@ -33,7 +35,7 @@ public class ElectricityPriceBulkRepository {
 
         jdbcTemplate.batchUpdate(sql, entities, 1000,
                 (ps, entity) -> {
-                    ps.setObject(1, Timestamp.from(entity.getRecordedAt()));
+                    ps.setTimestamp(1, Timestamp.from(entity.getRecordedAt()));
                     ps.setDouble(2, entity.getPrice());
                     ps.setString(3, entity.getCountry());
                 });
