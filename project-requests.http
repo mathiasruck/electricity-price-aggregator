@@ -1,5 +1,5 @@
 ### Aggregated Data: Get aggregated data for a date range
-GET http://localhost:8080/api/v1/aggregated-data?startDate=2024-01-01&endDate=2024-01-31
+GET http://localhost:8080/api/v1/aggregated-data?startDateUtc=2024-01-01&endDateUtc=2024-01-31
 Accept: application/json
 
 ### Electricity Prices: Upload electricity price CSV file

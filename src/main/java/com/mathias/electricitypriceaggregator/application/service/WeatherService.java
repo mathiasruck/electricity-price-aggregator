@@ -33,8 +33,7 @@ public class WeatherService {
     /**
      * Scheduled method to fetch weather data every minute
      */
-    @Scheduled(fixedRate = 60000) // Run every minute
-    // todo Should do the average temperature for the day considering only the hours we have electricity price data for? Currently it does the average for the whole day.
+    @Scheduled(cron = "0 * * * * *")
     public void syncWeatherData() {
         try {
             List<LocalDate> pricesDateWithoutWeather = electricityPriceRepository.findPricesDateWithoutWeather();
@@ -45,13 +44,6 @@ public class WeatherService {
         } catch (Exception e) {
             System.err.println("Error during weather data sync: " + e.getMessage());
         }
-    }
-
-    /**
-     * Manually trigger weather data fetch for a specific date
-     */
-    public void fetchWeatherDataForDate(LocalDate date) {
-        fetchAndSaveWeatherDataForDate(date);
     }
 
     private void fetchAndSaveWeatherDataForDate(LocalDate date) {

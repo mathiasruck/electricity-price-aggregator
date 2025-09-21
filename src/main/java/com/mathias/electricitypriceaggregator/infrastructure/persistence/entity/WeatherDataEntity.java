@@ -1,6 +1,7 @@
 package com.mathias.electricitypriceaggregator.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -9,9 +10,9 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "weather_data",
-       indexes = {
-           @Index(name = "idx_weather_date", columnList = "date")
-       })
+        indexes = {
+                @Index(name = "idx_weather_date", columnList = "date")
+        })
 public class WeatherDataEntity {
 
     @Id

@@ -8,7 +8,7 @@ import com.opencsv.bean.CsvBindByName;
 public abstract class ElectricityPrice {
 
     @CsvBindByName(column = "Ajatempel (UTC)")
-    private long recordedAt;
+    private Long recordedAt;
 
     public abstract String getCountry();
 
@@ -16,11 +16,11 @@ public abstract class ElectricityPrice {
 
     public abstract void setPrice(Double price);
 
-    public long getRecordedAt() {
+    public Long getRecordedAt() {
         return recordedAt;
     }
 
-    public void setRecordedAt(long recordedAt) {
+    public void setRecordedAt(Long recordedAt) {
         this.recordedAt = recordedAt;
     }
 }

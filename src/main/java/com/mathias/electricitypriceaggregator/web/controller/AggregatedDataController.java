@@ -34,18 +34,18 @@ public class AggregatedDataController {
     @Operation(summary = "Get aggregated data for date range",
             description = "Retrieve daily aggregated electricity prices and weather data for the specified date range")
     public ResponseEntity<List<DailyAggregatedDataDto>> getAggregatedData(
-            @Parameter(description = "Start date (YYYY-MM-DD)", example = "2024-01-01")
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "Start date (YYYY-MM-DD) in UTC", example = "2024-01-01")
+            @RequestParam("startDateUtc") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDateUtc,
 
-            @Parameter(description = "End date (YYYY-MM-DD)", example = "2024-01-31")
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @Parameter(description = "End date (YYYY-MM-DD) in UTC", example = "2024-01-31")
+            @RequestParam("endDateUtc") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDateUtc) {
 
         try {
-            if (startDate.isAfter(endDate)) {
+            if (startDateUtc.isAfter(endDateUtc)) {
                 return ResponseEntity.badRequest().build();
             }
 
-            List<DailyAggregatedData> aggregatedData = aggregationService.getAggregatedData(startDate, endDate);
+            List<DailyAggregatedData> aggregatedData = aggregationService.getAggregatedData(startDateUtc, endDateUtc);
 
             List<DailyAggregatedDataDto> dtoList = aggregatedData.stream()
                     .map(data -> new DailyAggregatedDataDto(

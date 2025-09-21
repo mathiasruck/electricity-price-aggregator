@@ -1,6 +1,5 @@
 package com.mathias.electricitypriceaggregator.integration;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -28,8 +27,4 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
-    @Test
-    void contextLoads() {
-        // Test that the application context loads successfully
-    }
 }

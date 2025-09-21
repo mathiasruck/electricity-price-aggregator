@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface JpaElectricityPriceRepository extends JpaRepository<ElectricityPriceEntity, Long> {
 
-    //todo Remove?
+    @Query("SELECT e FROM ElectricityPriceEntity e WHERE e.recordedAt >= :startInstant AND e.recordedAt < :endInstant ORDER BY e.recordedAt")
     List<ElectricityPriceEntity> findByRecordedAtBetween(Instant startInstant, Instant endInstant);
 
     @Query("""

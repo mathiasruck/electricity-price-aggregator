@@ -2,11 +2,12 @@ package com.mathias.electricitypriceaggregator.web.controller;
 
 import com.mathias.electricitypriceaggregator.application.service.AggregationService;
 import com.mathias.electricitypriceaggregator.domain.valueobject.DailyAggregatedData;
-import com.mathias.electricitypriceaggregator.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -22,12 +23,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration test for AggregatedDataController
  */
 @AutoConfigureWebMvc
-public class AggregatedDataControllerIntegrationTest extends BaseIntegrationTest {
+@AutoConfigureJson
+@WebMvcTest(AggregatedDataController.class)
+public class AggregatedDataControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private AggregationService aggregationService;
 
     @Test
@@ -42,8 +45,8 @@ public class AggregatedDataControllerIntegrationTest extends BaseIntegrationTest
 
         // When & Then
         mockMvc.perform(get("/api/v1/aggregated-data")
-                        .param("startDate", "2024-01-01")
-                        .param("endDate", "2024-01-01"))
+                        .param("startDateUtc", "2024-01-01")
+                        .param("endDateUtc", "2024-01-01"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].date").value("2024-01-01"))
                 .andExpect(jsonPath("$[0].averageElectricityPrice").value(40.0))

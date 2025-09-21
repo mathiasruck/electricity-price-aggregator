@@ -70,6 +70,6 @@ public class ElectricityPriceService {
     }
 
     private void upsertElectricityPrices(List<ElectricityPrice> electricityPrices) {
-        electricityPriceRepository.upsertAll(electricityPrices);
+        electricityPriceBulkRepository.upsertAll(electricityPrices);
     }
 }

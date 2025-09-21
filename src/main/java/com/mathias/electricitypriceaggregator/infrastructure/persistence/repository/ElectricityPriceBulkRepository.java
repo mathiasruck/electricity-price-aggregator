@@ -16,7 +16,6 @@ public class ElectricityPriceBulkRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ElectricityPriceMapper mapper;
-    private final EntityManager entityManager;
 
     public ElectricityPriceBulkRepository(JdbcTemplate jdbcTemplate, ElectricityPriceMapper mapper) {
         this.jdbcTemplate = jdbcTemplate;
