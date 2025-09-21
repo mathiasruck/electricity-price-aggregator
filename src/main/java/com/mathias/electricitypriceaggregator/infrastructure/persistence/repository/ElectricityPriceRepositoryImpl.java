@@ -29,7 +29,7 @@ public class ElectricityPriceRepositoryImpl implements ElectricityPriceRepositor
 
     @Override
     public List<ElectricityPrice> findByDateBetween(LocalDate startDate, LocalDate endDate) {
-        Instant startInstant = getBeginingOfTheDay(startDate);
+        Instant startInstant = getBeginningOfTheDay(startDate);
         Instant endInstant = getEndOfTheDay(endDate);
         return jpaRepository.findByRecordedAtBetween(startInstant, endInstant)
                 .stream()
@@ -45,6 +45,11 @@ public class ElectricityPriceRepositoryImpl implements ElectricityPriceRepositor
                 .toList();
     }
 
+    @Override
+    public List<Integer> findRecordedHoursByDate(LocalDate date) {
+        return jpaRepository.findRecordedHoursByDate(date);
+    }
+
     private static Instant getEndOfTheDay(LocalDate endDate) {
         return endDate
                 .plusDays(1)
@@ -53,7 +58,7 @@ public class ElectricityPriceRepositoryImpl implements ElectricityPriceRepositor
                 .toInstant();
     }
 
-    private static Instant getBeginingOfTheDay(LocalDate startDate) {
+    private static Instant getBeginningOfTheDay(LocalDate startDate) {
         return startDate
                 .atStartOfDay()
                 .toInstant(UTC);

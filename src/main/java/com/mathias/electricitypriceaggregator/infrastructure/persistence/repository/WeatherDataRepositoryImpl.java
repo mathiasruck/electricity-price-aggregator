@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Implementation of WeatherDataRepository using JPA
@@ -20,7 +19,7 @@ public class WeatherDataRepositoryImpl implements WeatherDataRepository {
     private final WeatherDataMapper mapper;
 
     public WeatherDataRepositoryImpl(JpaWeatherDataRepository jpaRepository,
-                                   WeatherDataMapper mapper) {
+                                     WeatherDataMapper mapper) {
         this.jpaRepository = jpaRepository;
         this.mapper = mapper;
     }
@@ -33,25 +32,8 @@ public class WeatherDataRepositoryImpl implements WeatherDataRepository {
     }
 
     @Override
-    public Optional<WeatherData> findByDate(LocalDate date) {
-        return jpaRepository.findByDate(date)
-                .map(mapper::toDomain);
-    }
-
-    @Override
     public List<WeatherData> findByDateBetween(LocalDate startDate, LocalDate endDate) {
         return jpaRepository.findByDateBetween(startDate, endDate).stream()
-                .map(mapper::toDomain)
-                .toList();
-    }
-
-    @Override
-    public List<WeatherData> saveAll(List<WeatherData> weatherDataList) {
-        List<WeatherDataEntity> entities = weatherDataList.stream()
-                .map(mapper::toEntity)
-                .toList();
-        List<WeatherDataEntity> savedEntities = jpaRepository.saveAll(entities);
-        return savedEntities.stream()
                 .map(mapper::toDomain)
                 .toList();
     }

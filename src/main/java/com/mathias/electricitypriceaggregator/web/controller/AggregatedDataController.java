@@ -49,9 +49,9 @@ public class AggregatedDataController {
 
             List<DailyAggregatedDataDto> dtoList = aggregatedData.stream()
                     .map(data -> new DailyAggregatedDataDto(
-                            data.getDate(),
-                            data.getAverageElectricityPrice(),
-                            data.getAverageTemperature()))
+                            data.date(),
+                            data.averageElectricityPrice(),
+                            data.averageTemperature()))
                     .toList();
 
             return ResponseEntity.ok(dtoList);

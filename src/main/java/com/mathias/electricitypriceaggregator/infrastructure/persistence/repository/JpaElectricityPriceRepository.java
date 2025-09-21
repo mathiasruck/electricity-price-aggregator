@@ -3,10 +3,12 @@ package com.mathias.electricitypriceaggregator.infrastructure.persistence.reposi
 import com.mathias.electricitypriceaggregator.infrastructure.persistence.entity.ElectricityPriceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -26,4 +28,13 @@ public interface JpaElectricityPriceRepository extends JpaRepository<Electricity
                 )
             """)
     List<Date> findPricesDateWithoutWeather();
+
+    @Query(value = """
+            SELECT DISTINCT EXTRACT(HOUR FROM recorded_at AT TIME ZONE 'UTC')::int
+            FROM electricity_price
+            WHERE (recorded_at AT TIME ZONE 'UTC')::date = :date
+            ORDER BY 1
+            """, nativeQuery = true)
+    List<Integer> findRecordedHoursByDate(@Param("date") LocalDate date);
+
 }

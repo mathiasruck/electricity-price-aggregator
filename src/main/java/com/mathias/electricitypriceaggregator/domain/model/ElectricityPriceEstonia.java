@@ -2,8 +2,11 @@ package com.mathias.electricitypriceaggregator.domain.model;
 
 import com.mathias.electricitypriceaggregator.infrastructure.csv.DoubleConverter;
 import com.opencsv.bean.CsvCustomBindByName;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import java.util.Objects;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
  * Domain entity representing electricity price data for Estonia
@@ -46,10 +49,6 @@ public class ElectricityPriceEstonia extends ElectricityPrice {
 
     @Override
     public String toString() {
-        return "ElectricityPriceEstonia{" +
-                "recordedAt=" + getRecordedAt() +
-                ", price=" + price +
-                ", country=" + COUNTRY +
-                '}';
+        return ReflectionToStringBuilder.toString(this, SHORT_PREFIX_STYLE);
     }
 }

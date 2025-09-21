@@ -11,7 +11,6 @@ public class DoubleConverter extends AbstractBeanField<Double, String> {
             return null;
         }
         try {
-            // Normalize decimal separator from comma to period
             String normalizedValue = value.replace(",", ".");
             return Double.parseDouble(normalizedValue);
         } catch (NumberFormatException e) {

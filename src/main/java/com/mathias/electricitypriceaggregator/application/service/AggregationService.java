@@ -35,12 +35,10 @@ public class AggregationService {
     /**
      * Get aggregated data for a date range
      */
-    //todo create auxiliary table to store aggregated data instead of calculating on the fly?
+    // todo next: create auxiliary table to store aggregated data instead of calculating on the fly
     public List<DailyAggregatedData> getAggregatedData(LocalDate startDate, LocalDate endDate) {
-        // Fetch electricity prices for the date range
         List<ElectricityPrice> electricityPrices = electricityPriceRepository.findByDateBetween(startDate, endDate);
 
-        // Fetch weather data for the date range
         List<WeatherData> weatherDataList = weatherDataRepository.findByDateBetween(startDate, endDate);
 
         // Group electricity prices by date and calculate daily averages
@@ -63,11 +61,10 @@ public class AggregationService {
         return startDate.datesUntil(endDate.plusDays(1))
                 .map(date -> new DailyAggregatedData(
                         date,
-                        // todo fix this mapping - should match types. Today is LocalDate, but electricity price uses timestamp as Long
                         dailyPriceAverages.get(date),
                         weatherByDate.get(date)
                 ))
-                .filter(data -> data.getAverageElectricityPrice() != null || data.getAverageTemperature() != null)
+                .filter(data -> data.averageElectricityPrice() != null || data.averageTemperature() != null)
                 .collect(Collectors.toList());
     }
 }

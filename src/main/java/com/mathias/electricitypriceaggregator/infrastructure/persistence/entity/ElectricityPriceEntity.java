@@ -70,6 +70,6 @@ public class ElectricityPriceEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(recordedAt, country);
+        return getClass().hashCode();
     }
 }

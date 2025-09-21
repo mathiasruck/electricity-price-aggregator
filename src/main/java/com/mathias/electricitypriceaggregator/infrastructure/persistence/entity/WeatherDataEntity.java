@@ -10,8 +10,8 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "weather_data",
-        indexes = {
-                @Index(name = "idx_weather_date", columnList = "date")
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uc_weather_data_date", columnNames = "date")
         })
 public class WeatherDataEntity {
 
@@ -19,19 +19,11 @@ public class WeatherDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "date", nullable = false, unique = true)
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
     @Column(name = "average_temperature", nullable = false)
     private Double averageTemperature;
-
-    public WeatherDataEntity() {
-    }
-
-    public WeatherDataEntity(LocalDate date, Double averageTemperature) {
-        this.date = date;
-        this.averageTemperature = averageTemperature;
-    }
 
     // Getters and setters
     public Long getId() {
@@ -63,11 +55,11 @@ public class WeatherDataEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WeatherDataEntity that = (WeatherDataEntity) o;
-        return Objects.equals(date, that.date);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(date);
+        return getClass().hashCode();
     }
 }
