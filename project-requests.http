@@ -12,8 +12,3 @@ Content-Type: text/csv
 
 < ./plan/electricity-nps price_2024.csv
 --boundary--
-
-### Weather Data: Manually fetch weather data for a specific date
-POST http://localhost:8080/api/v1/weather/fetch/2024-01-15
-Accept: application/json
-
